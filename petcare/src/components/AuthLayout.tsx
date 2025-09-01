@@ -1,5 +1,6 @@
 import React from "react";
-import { Typography } from "antd";
+import { Typography, Button } from "antd";
+import type { ButtonProps } from "antd";
 import paw from "../assets/paw.png";
 
 const { Title, Text } = Typography;
@@ -10,7 +11,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-const AuthLayout: React.FC<Props> = ({ title, subtitle, children }) => {
+const AuthLayout: React.FC<Props> & { AuthButton: React.FC<ButtonProps> } = ({title,subtitle,children,}) => {  
   return (
     <div
       style={{
@@ -42,4 +43,21 @@ const AuthLayout: React.FC<Props> = ({ title, subtitle, children }) => {
   );
 };
 
+// 🔥 Reusable styled button (use across login/signup/forgot)
+AuthLayout.AuthButton = (props) => (
+  <Button
+    {...props}
+    type="primary"
+    size="large"
+    block
+    style={{
+      height: 44,
+      borderRadius: 12,
+      background: "linear-gradient(90deg, #ff8a00 0%, #ffb020 100%)",
+      borderColor: "transparent",
+      fontWeight: 600,
+      ...props.style,
+    }}
+  />
+);
 export default AuthLayout;
