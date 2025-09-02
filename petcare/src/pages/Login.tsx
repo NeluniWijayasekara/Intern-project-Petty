@@ -89,13 +89,6 @@ const inputStyle = {
   height: 44,
 };
 
-// const buttonStyle = {
-//   height: 44,
-//   borderRadius: 12,
-//   background: "linear-gradient(90deg, #ff8a00 0%, #ffb020 100%)",
-//   borderColor: "transparent",
-//   fontWeight: 600,
-// };
 
 export default Login;
 

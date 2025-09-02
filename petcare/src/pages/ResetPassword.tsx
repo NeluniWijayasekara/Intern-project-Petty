@@ -1,25 +1,71 @@
 import React from "react";
-import { Form, Input, Button } from "antd";
+import { Form, Input} from "antd";
 import AuthLayout from "../components/AuthLayout";
 
+type ResetValues = {
+  password: string;
+  repassword: string;
+};
+
 const ResetPassword: React.FC = () => {
-  const onFinish = (values: any) => {
-    console.log("Reset password submit:", values);
+  const [form] = Form.useForm<ResetValues>();
+
+  const onFinish = (values: ResetValues) => {
+    console.log("Reset password submit:", values); // API call here
   };
 
-  return (
-    <AuthLayout title="Petty" subtitle="">
-      <Form onFinish={onFinish} layout="vertical">
-        <Form.Item name="password" rules={[{ required: true }]}>
-          <Input.Password placeholder="Password" size="large" style={inputStyle} />
-        </Form.Item>
-        <Form.Item name="repassword" rules={[{ required: true }]}>
-          <Input.Password placeholder="Re enter password" size="large" style={inputStyle} />
+    return (
+    <AuthLayout title="Petty" subtitle="Reset your password">
+      <Form<ResetValues> form={form} onFinish={onFinish} layout="vertical">
+        
+        {/* New Password */}
+        <Form.Item
+          name="password"
+          rules={[
+            { required: true, message: "Please enter your new password" },
+            { min: 6, message: "Password must be at least 6 characters" },
+            {
+              validator: (_, value) => {
+                if (!value) return Promise.resolve();
+                const strongRegex = /[0-9@#$%^&*!]/;
+                if (!strongRegex.test(value)) {
+                  return Promise.reject(
+                    new Error("Password must include a number or special character")
+                  );
+                }
+                return Promise.resolve();
+              },
+            },
+          ]}
+        >
+          <Input.Password placeholder="New Password" size="large" style={inputStyle} />
         </Form.Item>
 
-        <Button htmlType="submit" type="primary" block size="large" style={buttonStyle}>
-          Login
-        </Button>
+        {/* Confirm Password */}
+        <Form.Item
+          name="repassword"
+          dependencies={["password"]}
+          rules={[
+            { required: true, message: "Please re-enter your password" },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || getFieldValue("password") === value) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error("Passwords do not match"));
+              },
+            }),
+          ]}
+        >
+          <Input.Password placeholder="Confirm Password" size="large" style={inputStyle} />
+        </Form.Item>
+
+        {/* Submit Button */}
+        <Form.Item>
+          <AuthLayout.AuthButton htmlType="submit">
+            Reset Password
+          </AuthLayout.AuthButton>
+        </Form.Item>
       </Form>
     </AuthLayout>
   );
@@ -30,14 +76,6 @@ const inputStyle = {
   background: "#f1f1f1",
   border: "none",
   height: 44,
-};
-
-const buttonStyle = {
-  height: 44,
-  borderRadius: 12,
-  background: "linear-gradient(90deg, #ff8a00 0%, #ffb020 100%)",
-  borderColor: "transparent",
-  fontWeight: 600,
 };
 
 export default ResetPassword;
