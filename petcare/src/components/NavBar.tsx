@@ -7,10 +7,8 @@ import {
   AppstoreOutlined,
   TeamOutlined,
   ToolOutlined,
-  ExclamationCircleOutlined,
   SettingOutlined,
-  SafetyCertificateOutlined,
-  BarChartOutlined,
+ 
 } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 
@@ -42,10 +40,7 @@ const NavBar: React.FC = () => {
           { key: "/marketplace-listings", icon: <AppstoreOutlined />, label: <Link to="/marketplace-listings">Marketplace Listings</Link> },
           { key: "/vets-providers", icon: <TeamOutlined />, label: <Link to="/vets-providers">Vets & Providers</Link> },
           { key: "/services", icon: <ToolOutlined />, label: <Link to="/services">Services</Link> },
-          { key: "/fraud-reports", icon: <ExclamationCircleOutlined />, label: <Link to="/fraud-reports">Fraud Reports</Link> },
           { key: "/admin-management", icon: <SettingOutlined />, label: <Link to="/admin-management">Admin Management</Link> },
-          { key: "/fraud-rules", icon: <SafetyCertificateOutlined />, label: <Link to="/fraud-rules">Fraud Rules</Link> },
-          { key: "/logs-analytics", icon: <BarChartOutlined />, label: <Link to="/logs-analytics">Logs & Analytics</Link> },
         ]}
       />
     </Sider>
