@@ -1,24 +1,48 @@
-import React from "react";
-import { Table, Tag, Button } from "antd";
+import React, { useEffect, useState } from "react";
+import { Table, Tag, Button, Spin, message } from "antd";
+import axios from "axios";
 
 interface User {
   key: string;
   name: string;
   email: string;
-  risk: "Low" | "Medium" | "High";
-  status: "Active" | "Suspended";
+  riskScore: "Low" | "Medium" | "High";
+  status: "Active" | "Suspended" | "Pending";
 }
 
 const Users: React.FC = () => {
-  const data: User[] = [
-    {
-      key: "1",
-      name: "Emma Lee",
-      email: "emma@example.com",
-      risk: "High",
-      status: "Suspended",
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  // 🔹 Fetch user list from backend
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get("http://localhost:5000/api/users");
+      const data = response.data.map((u: any, index: number) => ({
+        key: index.toString(),
+        name: u.name,
+        email: u.email,
+        riskScore: u.riskScore,
+        status: u.status,
+      }));
+      setUsers(data);
+    } catch (error) {
+      message.error("Failed to fetch users");
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  // 🔹 Action for Whitelist button
+  const handleWhitelist = (record: User) => {
+    message.success(`${record.name} has been whitelisted`);
+    // 👉 API call could go here: axios.post("/api/users/whitelist", { id: record.key })
+  };
 
   const columns = [
     {
@@ -33,12 +57,13 @@ const Users: React.FC = () => {
     },
     {
       title: "Risk Score",
-      dataIndex: "risk",
-      key: "risk",
-      render: (risk: User["risk"]) => {
-        let color = "green";
+      dataIndex: "riskScore",
+      key: "riskScore",
+      render: (risk: User["riskScore"]) => {
+        let color = "blue";
         if (risk === "High") color = "red";
         else if (risk === "Medium") color = "orange";
+        else if (risk === "Low") color = "green";
         return <Tag color={color}>{risk}</Tag>;
       },
     },
@@ -46,20 +71,13 @@ const Users: React.FC = () => {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (status: User["status"]) => {
-        return status === "Suspended" ? (
-          <Tag color="volcano">{status}</Tag>
-        ) : (
-          <Tag color="blue">{status}</Tag>
-        );
-      },
     },
     {
       title: "Actions",
       key: "actions",
       render: (_: any, record: User) => (
-        <Button type="default">
-          {record.status === "Suspended" ? "Whitelist" : "Suspend"}
+        <Button type="primary" onClick={() => handleWhitelist(record)}>
+          Whitelist
         </Button>
       ),
     },
@@ -68,7 +86,11 @@ const Users: React.FC = () => {
   return (
     <div>
       <h2>User Fraud Management</h2>
-      <Table columns={columns} dataSource={data} pagination={false} />
+      {loading ? (
+        <Spin size="large" />
+      ) : (
+        <Table columns={columns} dataSource={users} pagination={false} />
+      )}
     </div>
   );
 };
