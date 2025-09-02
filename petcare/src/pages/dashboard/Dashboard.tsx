@@ -1,29 +1,29 @@
 import React from "react";
-import { Card, Row, Col } from "antd";
+import { Row, Col, Card } from "antd";
 
 const Dashboard: React.FC = () => {
   return (
-    <div style={{ padding: 24 }}>
-      <h1>Dashboard</h1>
-      <Row gutter={16}>
-        <Col span={6}>
-          <Card title="Users" bordered={false}>
-            120
+    <div>
+      <h2 style={{ marginBottom: 20 }}>Dashboard Overview</h2>
+      <Row gutter={[16, 16]}>
+        <Col xs={24} sm={12} md={6}>
+          <Card bordered style={{ borderRadius: 8 }}>
+            <h3>Active Fraud Cases: 12</h3>
           </Card>
         </Col>
-        <Col span={6}>
-          <Card title="Pets" bordered={false}>
-            80
+        <Col xs={24} sm={12} md={6}>
+          <Card bordered style={{ borderRadius: 8 }}>
+            <h3>High-Risk Users: 5</h3>
           </Card>
         </Col>
-        <Col span={6}>
-          <Card title="Appointments" bordered={false}>
-            45
+        <Col xs={24} sm={12} md={6}>
+          <Card bordered style={{ borderRadius: 8 }}>
+            <h3>Flagged Claims: 8</h3>
           </Card>
         </Col>
-        <Col span={6}>
-          <Card title="Revenue" bordered={false}>
-            $2,500
+        <Col xs={24} sm={12} md={6}>
+          <Card bordered style={{ borderRadius: 8 }}>
+            <h3>Suspicious Listings: 4</h3>
           </Card>
         </Col>
       </Row>
