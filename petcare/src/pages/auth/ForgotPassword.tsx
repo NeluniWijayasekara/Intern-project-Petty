@@ -1,6 +1,6 @@
 import React from "react";
 import { Form, Input} from "antd";
-import AuthLayout from "../components/AuthLayout";
+import AuthLayout from "../../components/AuthLayout";
 
 type ForgotPasswordValues = {
   email: string;

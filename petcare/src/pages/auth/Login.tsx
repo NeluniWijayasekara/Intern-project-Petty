@@ -1,7 +1,7 @@
 import React from "react";
 import { Form, Input,Typography } from "antd";
 import { Link } from "react-router-dom";
-import AuthLayout from "../components/AuthLayout.tsx";
+import AuthLayout from "../../components/AuthLayout.tsx";
 
 const { Text } = Typography;
 
