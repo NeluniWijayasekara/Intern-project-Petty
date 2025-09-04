@@ -1,52 +1,46 @@
-import React, { useEffect, useState } from "react";
-import { Table, Tag, Button, Spin, message } from "antd";
-import axios from "axios";
+import React, { useState } from "react";
+import { Table, Button, message } from "antd";
+import type { TableColumnsType } from "antd";
+import UserForm from "../../components/form/UserForm";
 
 interface User {
-  key: string;
+  id: string;
   name: string;
   email: string;
-  riskScore: "Low" | "Medium" | "High";
-  status: "Active" | "Suspended" | "Pending";
+  role: string;
 }
+// Dummy data
+const initialUsers: User[] = [
+  {
+    id: "U-1001",
+    name: "Kamal Perera",
+    email: "kamal@petcare.lk",
+    role: "Admin",
+  },
+];
 
 const Users: React.FC = () => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [users, setUsers] = useState<User[]>(initialUsers);
+  const [open, setOpen] = useState(false);
 
-  // 🔹 Fetch user list from backend
-  const fetchUsers = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get("http://localhost:5000/api/users");
-      const data = response.data.map((u: any, index: number) => ({
-        key: index.toString(),
-        name: u.name,
-        email: u.email,
-        riskScore: u.riskScore,
-        status: u.status,
-      }));
-      setUsers(data);
-    } catch (error) {
-      message.error("Failed to fetch users");
-    } finally {
-      setLoading(false);
-    }
+  const onDelete = (id: string) => {
+    setUsers((prev) => prev.filter((u) => u.id !== id));
+    message.success("User deleted");
   };
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  // 🔹 Action for Whitelist button
-  const handleWhitelist = (record: User) => {
-    message.success(`${record.name} has been whitelisted`);
-    // 👉 API call could go here: axios.post("/api/users/whitelist", { id: record.key })
+  const onAdd = (user: User) => {
+    setUsers((prev) => [user, ...prev]);
+    message.success("User created");
   };
 
-  const columns = [
+  const columns: TableColumnsType<User> = [
     {
-      title: "Name",
+      title: "User ID",
+      dataIndex: "id",
+      key: "id",
+    },
+    {
+      title: "Full Name",
       dataIndex: "name",
       key: "name",
     },
@@ -56,41 +50,33 @@ const Users: React.FC = () => {
       key: "email",
     },
     {
-      title: "Risk Score",
-      dataIndex: "riskScore",
-      key: "riskScore",
-      render: (risk: User["riskScore"]) => {
-        let color = "blue";
-        if (risk === "High") color = "red";
-        else if (risk === "Medium") color = "orange";
-        else if (risk === "Low") color = "green";
-        return <Tag color={color}>{risk}</Tag>;
-      },
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-    },
-    {
-      title: "Actions",
-      key: "actions",
-      render: (_: any, record: User) => (
-        <Button type="primary" onClick={() => handleWhitelist(record)}>
-          Whitelist
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <Button size="small" danger onClick={() => onDelete(record.id)}>
+          Delete
         </Button>
       ),
     },
   ];
 
   return (
-    <div>
-      <h2>User Fraud Management</h2>
-      {loading ? (
-        <Spin size="large" />
-      ) : (
-        <Table columns={columns} dataSource={users} pagination={false} />
-      )}
+    <div style={{ padding: 16 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
+        <h2 style={{ margin: 0 }}>User Management</h2>
+        <Button type="primary" onClick={() => setOpen(true)}>
+          + Add User
+        </Button>
+      </div>
+
+      <Table rowKey="id" columns={columns} dataSource={users} pagination={{ pageSize: 5 }} />
+
+      <UserForm open={open} setOpen={setOpen} onAdd={onAdd} />
     </div>
   );
 };
