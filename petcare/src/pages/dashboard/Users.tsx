@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Table, Button, message } from "antd";
+import { Table, Button, message, Popconfirm  } from "antd";
 import type { TableColumnsType } from "antd";
 import UserForm from "../../components/form/UserForm";
 
@@ -69,9 +69,16 @@ const Users: React.FC = () => {
       key: "action",
       render: (_, record) => (
         // Delete button calls onDelete with the current user's id
-        <Button size="small" danger onClick={() => onDelete(record.id)}>
-          Delete
-        </Button>
+         <Popconfirm
+          title="Are you sure you want to delete this user?"
+          okText="Yes"
+          cancelText="No"
+          onConfirm={() => onDelete(record.id)}
+        >
+          <Button size="small" danger>
+            Delete
+          </Button>
+        </Popconfirm>
       ),
     },
   ];
