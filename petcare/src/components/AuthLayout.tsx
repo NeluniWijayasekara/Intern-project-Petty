@@ -6,12 +6,12 @@ import paw from "../assets/paw.png";
 const { Title, Text } = Typography;
 
 type Props = {
-  title: string;
+  // title: string; // Removed unused prop
   subtitle?: string;
   children: React.ReactNode;
 };
 
-const AuthLayout: React.FC<Props> & { AuthButton: React.FC<ButtonProps> } = ({title,subtitle,children,}) => {  
+const AuthLayout: React.FC<Props> & { AuthButton: React.FC<ButtonProps> } = ({subtitle,children,}) => {  
   return (
     <div
       style={{

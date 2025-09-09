@@ -19,7 +19,7 @@ const Users: React.FC = () => {
     setLoading(true);
     try {
       const response = await axios.get("http://localhost:5000/api/users");
-      const data = response.data.map((u: any, index: number) => ({
+  const data = response.data.map((u: { name: string; email: string; riskScore: User["riskScore"]; status: User["status"] }, index: number) => ({
         key: index.toString(),
         name: u.name,
         email: u.email,
@@ -27,7 +27,7 @@ const Users: React.FC = () => {
         status: u.status,
       }));
       setUsers(data);
-    } catch (error) {
+    } catch {
       message.error("Failed to fetch users");
     } finally {
       setLoading(false);
@@ -75,7 +75,7 @@ const Users: React.FC = () => {
     {
       title: "Actions",
       key: "actions",
-      render: (_: any, record: User) => (
+  render: (_: unknown, record: User) => (
         <Button type="primary" onClick={() => handleWhitelist(record)}>
           Whitelist
         </Button>
