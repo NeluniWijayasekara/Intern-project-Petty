@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Table, Button, message, Popconfirm  } from "antd";
+import { Table, Button, message, Popconfirm ,Modal, Descriptions, Typography  } from "antd";
 import type { TableColumnsType } from "antd";
 import UserForm from "../../components/form/UserForm";
 
-// Define the shape of a User object using TypeScript interface
+// Define User type
 interface User {
   id: string;
   name: string;
@@ -13,10 +13,7 @@ interface User {
 // Initial dummy data (preloaded users) use for get ida about UI
 const initialUsers: User[] = [
   {
-    id: "U-1001",
-    name: "Kamal Perera",
-    email: "kamal@petcare.lk",
-    role: "Admin",
+    id: "U-1001",name: "Kamal Perera",email: "kamal@petcare.lk", role: "Admin",
   },
 ];
 
@@ -26,6 +23,11 @@ const Users: React.FC = () => {
 
   // State to control whether the Add User modal (UserForm) is open
   const [open, setOpen] = useState(false);
+
+  // State: View User modal
+  const [viewUser, setViewUser] = useState<User | null>(null);
+  const [viewOpen, setViewOpen] = useState(false);
+
 
   // Function to delete a user by ID
   const onDelete = (id: string) => {
@@ -39,6 +41,12 @@ const Users: React.FC = () => {
     // Prepend the new user to the existing list
     setUsers((prev) => [user, ...prev]);
     message.success("User created");
+  };
+
+    // View function
+  const onView = (user: User) => {
+    setViewUser(user);
+    setViewOpen(true);
   };
 
   // Prepend the new user to the existing list
@@ -68,17 +76,22 @@ const Users: React.FC = () => {
       title: "Action",
       key: "action",
       render: (_, record) => (
-        // Delete button calls onDelete with the current user's id
-         <Popconfirm
-          title="Are you sure you want to delete this user?"
-          okText="Yes"
-          cancelText="No"
-          onConfirm={() => onDelete(record.id)}
-        >
-          <Button size="small" danger>
-            Delete
-          </Button>
-        </Popconfirm>
+        <div style={{ display: "flex", gap: "8px" }}>
+      <Button size="small" onClick={() => onView(record)}>
+        View
+      </Button>
+      <Popconfirm
+        title={`Are you sure you want to delete ${record.name}?`}
+        okText="Yes"
+        cancelText="No"
+        onConfirm={() => onDelete(record.id)}
+      >
+        {/* Delete button calls onDelete with the current user's id  */}
+        <Button size="small" danger>
+          Delete
+        </Button>
+      </Popconfirm>
+    </div>
       ),
     },
   ];
@@ -98,6 +111,40 @@ const Users: React.FC = () => {
 
       {/* UserForm component for adding new users (modal popup) */}
       <UserForm open={open} setOpen={setOpen} onAdd={onAdd} />
+
+      {/* View User Modal */}
+      <Modal
+        title="User Details"
+        open={viewOpen}
+        onCancel={() => setViewOpen(false)}
+        footer={null}
+        >
+        {viewUser && (
+        <Descriptions
+          bordered
+          column={1} // single column
+          size="middle"
+          layout="horizontal" // horizontal layout → label and value same line
+          style={{ background: "#fafafa", padding: 16, borderRadius: 8 }}
+        >
+        <Descriptions.Item label="User ID">
+          <Typography.Text strong>{viewUser.id}</Typography.Text>
+        </Descriptions.Item>
+
+        <Descriptions.Item label="Name">
+          <Typography.Text>{viewUser.name}</Typography.Text>
+        </Descriptions.Item>
+
+        <Descriptions.Item label="Email">
+          <Typography.Text>{viewUser.email}</Typography.Text>
+        </Descriptions.Item>
+
+        <Descriptions.Item label="Role">
+         <Typography.Text>{viewUser.role}</Typography.Text>
+        </Descriptions.Item>
+      </Descriptions>
+      )}
+      </Modal>
     </div>
   );
 };
