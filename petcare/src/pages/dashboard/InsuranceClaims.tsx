@@ -19,7 +19,7 @@ const InsuranceClaims: React.FC = () => {
     setLoading(true);
     try {
       const response = await axios.get("http://localhost:5000/api/claims");
-      const data = response.data.map((c: any, index: number) => ({
+  const data = response.data.map((c: { claimId: string; pet: string; owner: string; flag: Claim["flag"] }, index: number) => ({
         key: index.toString(),
         claimId: c.claimId,
         pet: c.pet,
@@ -27,7 +27,7 @@ const InsuranceClaims: React.FC = () => {
         flag: c.flag,
       }));
       setClaims(data);
-    } catch (error) {
+    } catch {
       message.error("Failed to fetch claims");
     } finally {
       setLoading(false);

@@ -21,6 +21,7 @@ const Users: React.FC = () => {
   // State to hold the list of users
   const [users, setUsers] = useState<User[]>(initialUsers);
 
+<<<<<<< HEAD
   // State to control whether the Add User modal (UserForm) is open
   const [open, setOpen] = useState(false);
 
@@ -34,6 +35,26 @@ const Users: React.FC = () => {
     // Keep only the users whose id is not equal to the deleted one
     setUsers((prev) => prev.filter((u) => u.id !== id));
     message.success("User deleted");
+=======
+  // 🔹 Fetch user list from backend
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get("http://localhost:5000/api/users");
+  const data = response.data.map((u: { name: string; email: string; riskScore: User["riskScore"]; status: User["status"] }, index: number) => ({
+        key: index.toString(),
+        name: u.name,
+        email: u.email,
+        riskScore: u.riskScore,
+        status: u.status,
+      }));
+      setUsers(data);
+    } catch {
+      message.error("Failed to fetch users");
+    } finally {
+      setLoading(false);
+    }
+>>>>>>> dashboard
   };
 
   // Function to add a new user
@@ -72,6 +93,7 @@ const Users: React.FC = () => {
       key: "role",
     },
     {
+<<<<<<< HEAD
       // Column for actions like Delete
       title: "Action",
       key: "action",
@@ -89,6 +111,18 @@ const Users: React.FC = () => {
         {/* Delete button calls onDelete with the current user's id  */}
         <Button size="small" danger>
           Delete
+=======
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+    },
+    {
+      title: "Actions",
+      key: "actions",
+  render: (_: unknown, record: User) => (
+        <Button type="primary" onClick={() => handleWhitelist(record)}>
+          Whitelist
+>>>>>>> dashboard
         </Button>
       </Popconfirm>
     </div>
