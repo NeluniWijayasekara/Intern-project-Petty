@@ -8,6 +8,8 @@ import {
   TeamOutlined,
   ToolOutlined,
   SettingOutlined,
+  ApartmentOutlined,
+  BankOutlined,  
  
 } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
@@ -36,6 +38,8 @@ const NavBar: React.FC = () => {
         items={[
           { key: "/home", icon: <DashboardOutlined />, label: <Link to="/home">Dashboard</Link> },
           { key: "/users", icon: <UserOutlined />, label: <Link to="/users">Users</Link> },
+          { key: "/petcare-management", icon: <ApartmentOutlined />, label: <Link to="/petcare-management">Petcare Management</Link> },
+          { key: "/company-management", icon: <BankOutlined />, label: <Link to="/company-management">Company Management</Link> },
           { key: "/insurance-claims", icon: <FileSearchOutlined />, label: <Link to="/insurance-claims">Insurance Claims</Link> },
           { key: "/marketplace-listings", icon: <AppstoreOutlined />, label: <Link to="/marketplace-listings">Marketplace Listings</Link> },
           { key: "/vets-providers", icon: <TeamOutlined />, label: <Link to="/vets-providers">Vets & Providers</Link> },

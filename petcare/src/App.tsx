@@ -13,13 +13,14 @@ import MainLayout from "./components/MainLayout";
 
 // 📊 Dashboard Pages
 import Dashboard from "./pages/dashboard/Dashboard";
-
 import MarketplaceListings from "./pages/dashboard/MarketplaceListings";
 import VetsProviders from "./pages/dashboard/VetsProviders";
 import Services from "./pages/dashboard/Services";
 import AdminManagement from "./pages/dashboard/AdminManagement";
 import Users from "./pages/dashboard/Users";
 import InsuranceClaims from "./pages/dashboard/InsuranceClaims";
+import PetcareManagement from "./pages/dashboard/PetcareManagement";
+import CompanyManagement from "./pages/dashboard/CompanyManagement";
 
 const App: React.FC = () => {
   return (
@@ -36,6 +37,8 @@ const App: React.FC = () => {
         {/* 📊 Dashboard + Sidebar */}
         <Route path="/home" element={<MainLayout><Dashboard /></MainLayout>}/>
         <Route path="/users" element={<MainLayout><Users /></MainLayout>} />
+        <Route path="/petcare-management" element={<MainLayout><PetcareManagement /></MainLayout>} />
+        <Route path="/company-management" element={<MainLayout><CompanyManagement /></MainLayout>} />
         <Route path="/insurance-claims" element={   <MainLayout><InsuranceClaims /></MainLayout>}/>
         <Route path="/marketplace-listings" element={<MainLayout><MarketplaceListings /></MainLayout>} />
         <Route path="/vets-providers" element={<MainLayout><VetsProviders /></MainLayout>}/>
