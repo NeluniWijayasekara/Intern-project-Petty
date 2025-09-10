@@ -1,207 +1,302 @@
 import React, { useState } from "react";
+import {
+  Table,
+  Button,
+  message,
+  Popconfirm,
+  Modal,
+  Descriptions,
+  Typography,
+  Space,
+  Form,
+  Input,
+  DatePicker,
+} from "antd";
+import type { TableColumnsType } from "antd";
+import dayjs from "dayjs";
 
 interface Company {
-  id: number;
+  id: string;
   name: string;
+  legalDocument: string;
+  registerDate: string;
+  owner: string;
   location: string;
 }
 
+const initialCompanies: Company[] = [
+  {
+    id: "C-1001",
+    name: "Tech Innovators Pvt Ltd",
+    legalDocument: "DOC-2024-01",
+    registerDate: "2023-05-15",
+    owner: "Nimal Silva",
+    location: "Colombo, Sri Lanka",
+  },
+];
+
 const CompanyManagement: React.FC = () => {
-  const [companies, setCompanies] = useState<Company[]>([
-    { id: 1, name: "ABC Pvt Ltd", location: "Colombo" },
-    { id: 2, name: "XYZ Holdings", location: "Kandy" },
-  ]);
+  const [companies, setCompanies] = useState<Company[]>(initialCompanies);
 
-  const [newCompany, setNewCompany] = useState({ name: "", location: "" });
-  const [editingId, setEditingId] = useState<number | null>(null);
+  // Add Modal
+  const [open, setOpen] = useState(false);
 
-  // Add new company
-  const handleAdd = () => {
-    if (!newCompany.name || !newCompany.location) return;
-    setCompanies([
-      ...companies,
-      { id: Date.now(), name: newCompany.name, location: newCompany.location },
-    ]);
-    setNewCompany({ name: "", location: "" });
+  // Edit Modal
+  const [editOpen, setEditOpen] = useState(false);
+  const [editCompany, setEditCompany] = useState<Company | null>(null);
+
+  // View Modal
+  const [viewCompany, setViewCompany] = useState<Company | null>(null);
+  const [viewOpen, setViewOpen] = useState(false);
+
+  const [form] = Form.useForm();
+
+  // Delete
+  const onDelete = (id: string) => {
+    setCompanies((prev) => prev.filter((c) => c.id !== id));
+    message.success("Company deleted");
   };
 
-  // Delete company
-  const handleDelete = (id: number) => {
-    setCompanies(companies.filter((c) => c.id !== id));
+  // Add
+  const onAdd = (values: any) => {
+    const newCompany: Company = {
+      id: "C-" + (Math.floor(Math.random() * 9000) + 1000),
+      ...values,
+      registerDate: values.registerDate.format("YYYY-MM-DD"),
+    };
+    setCompanies((prev) => [newCompany, ...prev]);
+    message.success("Company added");
+    setOpen(false);
+    form.resetFields();
   };
 
-  // Edit company
-  const handleEdit = (id: number) => {
-    setEditingId(id);
-    const company = companies.find((c) => c.id === id);
-    if (company) setNewCompany({ name: company.name, location: company.location });
-  };
-
-  // Update company
-  const handleUpdate = () => {
-    setCompanies(
-      companies.map((c) =>
-        c.id === editingId ? { ...c, name: newCompany.name, location: newCompany.location } : c
+  // Edit
+  const onEdit = (values: any) => {
+    if (!editCompany) return;
+    const updated = {
+      ...values,
+      registerDate: values.registerDate.format("YYYY-MM-DD"),
+    };
+    setCompanies((prev) =>
+      prev.map((c) =>
+        c.id === editCompany.id ? { ...c, ...updated } : c
       )
     );
-    setEditingId(null);
-    setNewCompany({ name: "", location: "" });
+    message.success("Company updated");
+    setEditOpen(false);
+    setEditCompany(null);
+    form.resetFields();
   };
 
+  // View
+  const onView = (company: Company) => {
+    setViewCompany(company);
+    setViewOpen(true);
+  };
+
+  // Table Columns
+  const columns: TableColumnsType<Company> = [
+    { title: "Company ID", dataIndex: "id", key: "id" },
+    { title: "Name", dataIndex: "name", key: "name" },
+    { title: "Legal Document", dataIndex: "legalDocument", key: "legalDocument" },
+    { title: "Register Date", dataIndex: "registerDate", key: "registerDate" },
+    { title: "Owner", dataIndex: "owner", key: "owner" },
+    { title: "Location", dataIndex: "location", key: "location" },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <Space>
+          <Button size="small" onClick={() => onView(record)}>View</Button>
+          <Button
+            size="small"
+            onClick={() => {
+              setEditCompany(record);
+              form.setFieldsValue({
+                ...record,
+                registerDate: dayjs(record.registerDate),
+              });
+              setEditOpen(true);
+            }}
+          >
+            Edit
+          </Button>
+          <Popconfirm
+            title={`Delete ${record.name}?`}
+            okText="Yes"
+            cancelText="No"
+            onConfirm={() => onDelete(record.id)}
+          >
+            <Button size="small" danger>Delete</Button>
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ];
+
   return (
-    <div style={{ padding: "20px", background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)', minHeight: '100vh' }}>
-      <h2 style={{ fontSize: 36, fontWeight: 700, marginBottom: 8, letterSpacing: 1, color: '#333' }}>🏢 Company Management</h2>
-      <p style={{ fontSize: 18, marginBottom: 24, color: '#555' }}>
-        Manage company information, branches, and employees in a vibrant dashboard.
-      </p>
-      <div style={{
-        background: 'white',
-        borderRadius: 16,
-        boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
-        padding: '32px',
-        maxWidth: 800,
-        margin: '0 auto 32px auto',
-      }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 16 }}>
-          <thead>
-            <tr style={{ background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)', color: 'white' }}>
-              <th style={{ padding: '12px 8px', borderRadius: '16px 0 0 0' }}>ID</th>
-              <th style={{ padding: '12px 8px' }}>Company Name</th>
-              <th style={{ padding: '12px 8px' }}>Location</th>
-              <th style={{ padding: '12px 8px', borderRadius: '0 16px 0 0' }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {companies.map((company) => (
-              <tr key={company.id} style={{ background: '#f5f7fa', borderBottom: '2px solid #e0e7ef' }}>
-                <td style={{ padding: '10px 8px', fontWeight: 600 }}>{company.id}</td>
-                <td style={{ padding: '10px 8px' }}>{company.name}</td>
-                <td style={{ padding: '10px 8px' }}>{company.location}</td>
-                <td style={{ padding: '10px 8px' }}>
-                  <button
-                    style={{
-                      background: 'linear-gradient(90deg, #43e97b 0%, #38f9d7 100%)',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: 8,
-                      padding: '6px 16px',
-                      marginRight: 8,
-                      cursor: 'pointer',
-                      fontWeight: 600,
-                    }}
-                    onClick={() => handleEdit(company.id)}
-                  >Edit</button>
-                  <button
-                    style={{
-                      background: 'linear-gradient(90deg, #fa709a 0%, #fee140 100%)',
-                      color: '#333',
-                      border: 'none',
-                      borderRadius: 8,
-                      padding: '6px 16px',
-                      cursor: 'pointer',
-                      fontWeight: 600,
-                    }}
-                    onClick={() => handleDelete(company.id)}
-                  >Delete</button>
-                </td>
-              </tr>
-            ))}
-            {companies.length === 0 && (
-              <tr>
-                <td colSpan={4} style={{ textAlign: 'center', padding: '16px', color: '#999' }}>
-                  No companies found
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-        {/* Add/Edit Form */}
-        <div style={{ marginTop: 32, display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
-          <input
-            type="text"
-            placeholder="Company Name"
-            value={newCompany.name}
-            onChange={(e) => setNewCompany({ ...newCompany, name: e.target.value })}
-            style={{ padding: '8px', borderRadius: 8, border: '1px solid #c3cfe2', minWidth: 180 }}
-          />
-          <input
-            type="text"
-            placeholder="Location"
-            value={newCompany.location}
-            onChange={(e) => setNewCompany({ ...newCompany, location: e.target.value })}
-            style={{ padding: '8px', borderRadius: 8, border: '1px solid #c3cfe2', minWidth: 180 }}
-          />
-          {editingId ? (
-            <button
-              onClick={handleUpdate}
-              style={{
-                background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
-                color: 'white',
-                border: 'none',
-                borderRadius: 8,
-                padding: '8px 24px',
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >Update Company</button>
-          ) : (
-            <button
-              onClick={handleAdd}
-              style={{
-                background: 'linear-gradient(90deg, #ffb347 0%, #ffcc33 100%)',
-                color: '#333',
-                border: 'none',
-                borderRadius: 8,
-                padding: '8px 24px',
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >Add Company</button>
-          )}
-        </div>
+    <div style={{ padding: 16 }}>
+      {/* Header */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginBottom: 12,
+        }}
+      >
+        <h2 style={{ margin: 0 }}>Company Management</h2>
+        <Button type="primary" onClick={() => setOpen(true)}>
+          + Add Company
+        </Button>
       </div>
-      <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', justifyContent: 'center' }}>
-        <div style={{
-          background: 'linear-gradient(135deg, #ffb347 0%, #ffcc33 100%)',
-          borderRadius: 16,
-          padding: '24px 32px',
-          minWidth: 220,
-          boxShadow: '0 4px 16px rgba(255,179,71,0.15)',
-          color: '#333',
-          textAlign: 'center',
-        }}>
-          <h3 style={{ fontWeight: 600, marginBottom: 8 }}>Branches</h3>
-          <p style={{ fontSize: 16 }}>Add, edit, and view company branches.</p>
-        </div>
-        <div style={{
-          background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-          borderRadius: 16,
-          padding: '24px 32px',
-          minWidth: 220,
-          boxShadow: '0 4px 16px rgba(67,233,123,0.15)',
-          color: '#333',
-          textAlign: 'center',
-        }}>
-          <h3 style={{ fontWeight: 600, marginBottom: 8 }}>Employees</h3>
-          <p style={{ fontSize: 16 }}>Manage employee records and roles.</p>
-        </div>
-        <div style={{
-          background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-          borderRadius: 16,
-          padding: '24px 32px',
-          minWidth: 220,
-          boxShadow: '0 4px 16px rgba(250,112,154,0.15)',
-          color: '#333',
-          textAlign: 'center',
-        }}>
-          <h3 style={{ fontWeight: 600, marginBottom: 8 }}>Company Info</h3>
-          <p style={{ fontSize: 16 }}>Edit company details and settings.</p>
-        </div>
-      </div>
+
+      {/* Table */}
+      <Table
+        rowKey="id"
+        columns={columns}
+        dataSource={companies}
+        pagination={{ pageSize: 5, showSizeChanger: true }}
+      />
+
+      {/* Add Company Modal */}
+      <Modal
+        title="Add New Company"
+        open={open}
+        onCancel={() => setOpen(false)}
+        footer={null}
+      >
+        <Form form={form} layout="vertical" onFinish={onAdd}>
+          <Form.Item
+            name="name"
+            label="Company Name"
+            rules={[{ required: true, message: "Please enter company name" }]}
+          >
+            <Input placeholder="Enter company name" />
+          </Form.Item>
+
+          <Form.Item
+            name="legalDocument"
+            label="Legal Document"
+            rules={[{ required: true, message: "Please enter legal document ID" }]}
+          >
+            <Input placeholder="Enter legal document" />
+          </Form.Item>
+
+          <Form.Item
+            name="registerDate"
+            label="Register Date"
+            rules={[{ required: true, message: "Please select register date" }]}
+          >
+            <DatePicker style={{ width: "100%" }} />
+          </Form.Item>
+
+          <Form.Item
+            name="owner"
+            label="Company Owner"
+            rules={[{ required: true, message: "Please enter owner name" }]}
+          >
+            <Input placeholder="Enter owner name" />
+          </Form.Item>
+
+          <Form.Item
+            name="location"
+            label="Location"
+            rules={[{ required: true, message: "Please enter location" }]}
+          >
+            <Input placeholder="Enter location" />
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block>
+              Add Company
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* Edit Company Modal */}
+      <Modal
+        title="Edit Company"
+        open={editOpen}
+        onCancel={() => {
+          setEditOpen(false);
+          setEditCompany(null);
+        }}
+        footer={null}
+      >
+        {editCompany && (
+          <Form form={form} layout="vertical" onFinish={onEdit}>
+            <Form.Item
+              name="name"
+              label="Company Name"
+              rules={[{ required: true, message: "Please enter company name" }]}
+            >
+              <Input placeholder="Enter company name" />
+            </Form.Item>
+
+            <Form.Item
+              name="legalDocument"
+              label="Legal Document"
+              rules={[{ required: true, message: "Please enter legal document ID" }]}
+            >
+              <Input placeholder="Enter legal document" />
+            </Form.Item>
+
+            <Form.Item
+              name="registerDate"
+              label="Register Date"
+              rules={[{ required: true, message: "Please select register date" }]}
+            >
+              <DatePicker style={{ width: "100%" }} />
+            </Form.Item>
+
+            <Form.Item
+              name="owner"
+              label="Company Owner"
+              rules={[{ required: true, message: "Please enter owner name" }]}
+            >
+              <Input placeholder="Enter owner name" />
+            </Form.Item>
+
+            <Form.Item
+              name="location"
+              label="Location"
+              rules={[{ required: true, message: "Please enter location" }]}
+            >
+              <Input placeholder="Enter location" />
+            </Form.Item>
+
+            <Form.Item>
+              <Button type="primary" htmlType="submit" block>
+                Update Company
+              </Button>
+            </Form.Item>
+          </Form>
+        )}
+      </Modal>
+
+      {/* View Company Modal */}
+      <Modal
+        title="Company Details"
+        open={viewOpen}
+        onCancel={() => setViewOpen(false)}
+        footer={null}
+      >
+        {viewCompany && (
+          <Descriptions bordered column={1} size="middle">
+            <Descriptions.Item label="Company ID">
+              <Typography.Text strong>{viewCompany.id}</Typography.Text>
+            </Descriptions.Item>
+            <Descriptions.Item label="Name">{viewCompany.name}</Descriptions.Item>
+            <Descriptions.Item label="Legal Document">{viewCompany.legalDocument}</Descriptions.Item>
+            <Descriptions.Item label="Register Date">{viewCompany.registerDate}</Descriptions.Item>
+            <Descriptions.Item label="Owner">{viewCompany.owner}</Descriptions.Item>
+            <Descriptions.Item label="Location">{viewCompany.location}</Descriptions.Item>
+          </Descriptions>
+        )}
+      </Modal>
     </div>
   );
 };
 
 export default CompanyManagement;
-
-
