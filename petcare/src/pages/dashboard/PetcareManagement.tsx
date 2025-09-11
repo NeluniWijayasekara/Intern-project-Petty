@@ -34,14 +34,14 @@ const initialPets: Pet[] = [
 const PetcareManagement: React.FC = () => {
   const [pets, setPets] = useState<Pet[]>(initialPets);
 
-  // Add Modal state
+  // Add 
   const [open, setOpen] = useState(false);
 
-  // Edit Modal state
+  // Edit 
   const [editOpen, setEditOpen] = useState(false);
   const [editPet, setEditPet] = useState<Pet | null>(null);
 
-  // View Modal state
+  // View 
   const [viewPet, setViewPet] = useState<Pet | null>(null);
   const [viewOpen, setViewOpen] = useState(false);
 
@@ -78,7 +78,7 @@ const PetcareManagement: React.FC = () => {
     setViewOpen(true);
   };
 
-  // Table Columns
+ 
   const columns: TableColumnsType<Pet> = [
     { title: "Pet ID", dataIndex: "id", key: "id" },
     { title: "Name", dataIndex: "name", key: "name" },
@@ -120,7 +120,7 @@ const PetcareManagement: React.FC = () => {
 
   return (
     <div style={{ padding: 16 }}>
-      {/* Header */}
+      
       <div
         style={{
           display: "flex",

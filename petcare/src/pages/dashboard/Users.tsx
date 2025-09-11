@@ -3,14 +3,14 @@ import { Table, Button, message, Popconfirm ,Modal, Descriptions, Typography  } 
 import type { TableColumnsType } from "antd";
 import UserForm from "../../components/form/UserForm";
 
-// Define User type
+// User type
 interface User {
   id: string;
   name: string;
   email: string;
   role: string;
 }
-// Initial dummy data (preloaded users) use for get ida about UI
+// Initial dummy data 
 const initialUsers: User[] = [
   {
     id: "U-1001",name: "Kamal Perera",email: "kamal@petcare.lk", role: "Admin",
@@ -21,21 +21,21 @@ const Users: React.FC = () => {
   // State to hold the list of users
   const [users, setUsers] = useState<User[]>(initialUsers);
 
-  // State to control whether the Add User modal (UserForm) is open
+  // Add 
   const [open, setOpen] = useState(false);
 
-  // State: View User modal
+  // View 
   const [viewUser, setViewUser] = useState<User | null>(null);
   const [viewOpen, setViewOpen] = useState(false);
 
-  // Function to delete a user by ID
+  // delete a user by ID
   const onDelete = (id: string) => {
     // Keep only the users whose id is not equal to the deleted one
     setUsers((prev) => prev.filter((u) => u.id !== id));
     message.success("User deleted");
   };
 
-  // Function to add a new user
+  // add a new user
   const onAdd = (user: User) => {
     // Prepend the new user to the existing list
     setUsers((prev) => [user, ...prev]);
@@ -48,7 +48,7 @@ const Users: React.FC = () => {
     setViewOpen(true);
   };
 
-  // Prepend the new user to the existing list
+  //table
   const columns: TableColumnsType<User> = [
     {
       title: "User ID",
@@ -85,7 +85,7 @@ const Users: React.FC = () => {
             cancelText="No"
             onConfirm={() => onDelete(record.id)}
           >
-            {/* Delete button calls onDelete with the current user's id  */}
+            {/* Delete button  */}
             <Button size="small" danger>
               Delete
             </Button>
@@ -97,7 +97,7 @@ const Users: React.FC = () => {
 
   return (
     <div style={{ padding: 16 }}>
-     {/* Header section with title and "Add User" button */}
+     
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
         <h2 style={{ margin: 0 }}>User Management</h2>
         <Button type="primary" onClick={() => setOpen(true)}>
@@ -105,10 +105,10 @@ const Users: React.FC = () => {
         </Button>
       </div>
 
-      {/* Ant Design table showing the list of users */}
+      {/* table  */}
       <Table rowKey="id" columns={columns} dataSource={users} pagination={{ pageSize: 5 }} />
 
-      {/* UserForm component for adding new users (modal popup) */}
+      {/* UserForm  */}
       <UserForm open={open} setOpen={setOpen} onAdd={onAdd} />
 
       {/* View User Modal */}
@@ -121,9 +121,9 @@ const Users: React.FC = () => {
         {viewUser && (
         <Descriptions
           bordered
-          column={1} // single column
+          column={1} 
           size="middle"
-          layout="horizontal" // horizontal layout → label and value same line
+          layout="horizontal" 
           style={{ background: "#fafafa", padding: 16, borderRadius: 8 }}
         >
         <Descriptions.Item label="User ID">
