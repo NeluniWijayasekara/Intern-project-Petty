@@ -21,6 +21,7 @@ import Users from "./pages/dashboard/Users";
 import InsuranceClaims from "./pages/dashboard/InsuranceClaims";
 import PetcareManagement from "./pages/dashboard/PetcareManagement";
 import CompanyManagement from "./pages/dashboard/CompanyManagement";
+import PermissionsManagement from "./pages/dashboard/PermissionsManagement";
 
 const App: React.FC = () => {
   return (
@@ -44,7 +45,7 @@ const App: React.FC = () => {
         <Route path="/vets-providers" element={<MainLayout><VetsProviders /></MainLayout>}/>
         <Route path="/services" element={<MainLayout><Services /></MainLayout>}/>
         <Route path="/admin-management"  element={<MainLayout><AdminManagement /></MainLayout> }/>
-    
+        <Route path="/permissions" element={<MainLayout><PermissionsManagement/></MainLayout>} />
 
         {/* ❌ Catch-all → back to login */}
         <Route path="*" element={<Navigate to="/login" replace />} />
